@@ -1,0 +1,33 @@
+<env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/">
+  <env:Body>
+    <dp:response xmlns:dp="http://www.datapower.com/schemas/management">
+      <dp:timestamp>2017-09-11T14:13:07-04:00</dp:timestamp>
+      <dp:status>
+        <XMLNamesStatus xmlns:env="http://www.w3.org/2003/05/soap-envelope">
+          <Type>JSON Keys</Type>
+          <Used>128</Used>
+          <PercentFree>100</PercentFree>
+          <Maximum>1048575</Maximum>
+        </XMLNamesStatus>
+        <XMLNamesStatus xmlns:env="http://www.w3.org/2003/05/soap-envelope">
+          <Type>Local Names</Type>
+          <Used>25448</Used>
+          <PercentFree>98</PercentFree>
+          <Maximum>1048575</Maximum>
+        </XMLNamesStatus>
+        <XMLNamesStatus xmlns:env="http://www.w3.org/2003/05/soap-envelope">
+          <Type>Prefix Names</Type>
+          <Used>249</Used>
+          <PercentFree>100</PercentFree>
+          <Maximum>262143</Maximum>
+        </XMLNamesStatus>
+        <XMLNamesStatus xmlns:env="http://www.w3.org/2003/05/soap-envelope">
+          <Type>URI Names</Type>
+          <Used>6268</Used>
+          <PercentFree>90</PercentFree>
+          <Maximum>65535</Maximum>
+        </XMLNamesStatus>
+      </dp:status>
+    </dp:response>
+  </env:Body>
+</env:Envelope>

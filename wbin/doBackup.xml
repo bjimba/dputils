@@ -1,0 +1,10 @@
+
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+    <soapenv:Body>
+        <dp:request xmlns:dp="http://www.datapower.com/schemas/management">
+            <dp:do-backup format="ZIP">
+                <dp:domain name="%domain%"/>
+            </dp:do-backup>
+        </dp:request>
+    </soapenv:Body>
+</soapenv:Envelope>

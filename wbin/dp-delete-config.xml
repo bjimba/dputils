@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+  <soapenv:Body>
+    <dp:request
+      xmlns:dp="http://www.datapower.com/schemas/management"
+      domain="%dpdomain%">
+      <dp:del-config>
+        <LogTarget name="del-test-log"/>
+      </dp:del-config>
+    </dp:request>
+  </soapenv:Body>
+</soapenv:Envelope>

@@ -1,0 +1,36 @@
+To be done:
+
+dp:get-diff (compare configs)
+
+dp:get-log
+
+dp:do-export
+
+    <do-export
+        format="ZIP"|"XML"
+        all-files="true"|"false"
+        persisted="true"|"false"
+        deployment-policy="string"
+    >
+        <!-- optional -->
+        <user-comment>My comment</user-comment>
+        <!-- required, 1 to n -->
+        <object
+            class="all-classes"|"MultiProtocolGateway"|see xml-mgmt.xsd(ConfigEnum)
+            name="all-objects"|"string"
+            ref-objects="true"|"false"
+            ref-files="true"|"false"
+            include-debug="true"|"false"
+        >
+        <!-- optional -->
+        <deployment-policy>
+            <mAdminState>?<mAdminState>
+            <!-- more here, figure it out later -->
+        </deployment-policy>
+    </do-export>
+
+Windows: tools needed
+    CURL http://curl.haxx.se/
+    XMLSTARLET http://xmlstar.sourceforge.net/
+    BASE64 http://www.fourmilab.ch/webtools/base64/
+

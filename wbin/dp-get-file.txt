@@ -1,0 +1,38 @@
+@echo off
+
+if not "%2"=="" goto ArgsOk
+if not exist %1 goto ArgsOk
+
+echo Usage:
+echo %0 filename dpfiledir
+echo Notes:
+echo.    filename - just filename, no DOS path.  Used both on DP and DOS
+echo.    dpfiledir - no filename, just dir
+echo.    WON'T RUN IF DOS FILE EXISTS!
+echo Example:
+echo .   %0 identity.xsl local:///jpr
+goto :EOF
+
+:ArgsOk
+setlocal
+set winfilespec=%1
+set dpfilespec=%2/%1
+set tmpfile=%TMP%\tmp-get-file.xml
+
+> %tmpfile% (
+echo ^<?xml version="1.0" encoding="UTF-8"?^>
+echo ^<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"^>
+echo ^<soapenv:Body^>
+echo ^<dp:request
+echo.    xmlns:dp="http://www.datapower.com/schemas/management"
+echo.    domain="%dpdomain%"^>
+echo ^<dp:get-file name="%dpfilespec%" /^>
+echo ^</dp:request^>
+echo ^</soapenv:Body^>
+echo ^</soapenv:Envelope^>
+)
+
+curl -k -u %dpuid%:%dppwd% -d @%tmpfile% https://%dpxml%:5550/service/mgmt/current ^
+ | xml sel -T -t -v "//*[local-name()='file']" ^
+ | fold -w 64 ^
+ | openssl enc -d -base64 >%winfilespec%
