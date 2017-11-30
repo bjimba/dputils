@@ -6,13 +6,14 @@ if [ "$dpenviron" = "" ]; then
 fi
 >&2 echo dpenviron $dpenviron
 
-DPCONFIG=~/.dpbuild
+# default if not set
+: ${DPCONFIG:=~/.dputils}
+
 DPBUILD=$(dirname $(readlink -f $0))
 
 # default soma port
 port=5550
 
-# steal the DCM config for our own use by sourcing
 . $DPCONFIG/$dpenviron.properties
 
 >&2 echo SOMA host $host
