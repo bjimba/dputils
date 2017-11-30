@@ -1,0 +1,27 @@
+#! /bin/bash
+
+if [ "$2" = "" ]; then
+  echo Usage:
+  echo $0 xcfg-src-path work-dir
+  exit 1
+fi
+
+DPBUILD=$(dirname $(readlink -f $0))
+
+# $1 is full pathname of a directory containing XCFGs
+# $2 is temporary work directory
+
+xcfgdir=$1
+workdir=$2
+
+mkdir $workdir
+cd $workdir
+
+shopt -s nullglob
+for file in $xcfgdir/*.xcfg; do
+  echo $file
+  $DPBUILD/clean-xcfg $file
+  #if [ $? -ne 0 ]; then
+  #  exit 1
+  #fi
+done

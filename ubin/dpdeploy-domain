@@ -1,0 +1,43 @@
+#! /bin/bash
+echo "*** Enter dpdeploy-domain"
+if [ "$dpenviron" = "" ]; then
+  echo Please export dpenviron
+  exit 1
+fi
+echo dpenviron $dpenviron
+
+if [ "$2" = "" ]; then
+  echo Usage: $0 dpdomain buildzip
+  echo Example: dpdeploy-domain DBPLICE DBPLICE-build.zip
+  exit 1
+fi
+
+DPBUILD=$(dirname $(readlink -f $0))
+dpdomain=$1
+buildzip=$2
+
+echo Start
+date
+
+echo Extract domain object from build
+DPTMP=$(mktemp -d)
+unzip $buildzip $dpdomain.zip -d $DPTMP
+
+echo Reset domain on deployment destination
+$DPBUILD/dcm-reset-domain $dpdomain
+if [ $? -ne 0 ]; then
+  echo "dcm-reset-domain returned non-zero : " $?
+  exit 1
+fi
+
+echo Deploy build
+$DPBUILD/dcm-import-obj $dpdomain $DPTMP/$dpdomain.zip
+if [ $? -ne 0 ]; then
+  echo "dcm-import-obj returned non-zero : " $?
+  exit 1
+fi
+
+echo Cleanup tmp
+rm -f $DPTMP/$dpdomain.zip
+rmdir $DPTMP
+echo "*** Exit dpdeploy-domain"

@@ -1,0 +1,34 @@
+#! /bin/bash
+
+if [ "$dpenviron" = "" ]; then
+  echo Please export dpenviron
+  exit 1
+fi
+echo dpenviron $dpenviron
+
+if [ "$3" = "" ]; then
+  echo Usage: $0 dpdomain buildzip source-env-dir
+  echo Example: dpdeploy-full DBPLICE DBPLICE-build.zip src/env/dev3W
+  exit 1
+fi
+
+DPBUILD=$(dirname $(readlink -f $0))
+dpdomain=$1
+buildzip=$2
+envdir=$3
+
+echo Start
+date
+
+echo Deploy build
+$DPBUILD/dcm-restore-domain $dpdomain $buildzip
+if [ $? -ne 0 ]; then
+  exit 1
+fi
+
+echo Apply environment
+$DPBUILD/dpdeploy-apply-env $dpdomain $envdir
+if [ $? -ne 0 ]; then
+  exit 1
+fi
+

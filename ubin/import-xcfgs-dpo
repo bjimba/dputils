@@ -1,0 +1,25 @@
+#! /bin/bash
+
+if [ "$3" = "" ]; then
+  echo Usage:
+  echo $0 domain xcfg-src-path deployment-policy
+  exit 1
+fi
+
+DPBUILD=$(dirname $(readlink -f $0))
+
+# $1 is domain
+# $2 is full pathname of a directory containing XCFGs
+# $3 is deployment policy object name
+dpdomain=$1
+xcfgdir=$2
+dpo=$3
+
+shopt -s nullglob
+for file in $xcfgdir/*.xcfg; do
+  echo $file
+  $DPBUILD/dcm-import-xcfg-dpo $dpdomain $file $dpo
+  if [ $? -ne 0 ]; then
+    exit 1
+  fi
+done

@@ -1,0 +1,58 @@
+#! /bin/bash
+# Warning: check before writing to stdout, appears this may be used to pipe curl output into something else
+>&2 echo "*** Enter soma-set-domain-label"
+if [ "$dpenviron" = "" ]; then
+  >&2 echo Please export dpenviron
+  exit 1
+fi
+>&2 echo dpenviron $dpenviron
+
+if [ "$2" = "" ]; then
+  >&2 echo Missing argument
+  >&2 echo Usage: $0 domain label
+  exit 1
+fi
+
+dpdomain=$1
+label=$2
+
+DPCONFIG=~/.dpbuild
+DPBUILD=$(dirname $(readlink -f $0))
+
+# default soma port
+port=5550
+
+# steal the DCM config for our own use by sourcing
+. $DPCONFIG/$dpenviron.properties
+
+>&2 echo SOMA host $host
+>&2 echo SOMA port $port
+
+tmpdir=$(mktemp -d)
+tmpfile=$tmpdir/tmp-set-domain-label.xml
+
+cat <<EOF >$tmpfile
+<?xml version="1.0" encoding="UTF-8"?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+  <soapenv:Body>
+    <dp:request
+      xmlns:dp="http://www.datapower.com/schemas/management"
+      domain="${dpdomain}">
+      <dp:modify-config>
+        <DomainSettings>
+          <UserSummary>${label}</UserSummary>
+        </DomainSettings>
+      </dp:modify-config>
+    </dp:request>
+  </soapenv:Body>
+</soapenv:Envelope>
+EOF
+
+>&2 echo "Contents of soma-set-domain-label request : "
+>&2 cat $tmpfile
+
+curl -k -u $uid:$pwd -d@$tmpfile https://$host:$port/service/mgmt/current
+
+rm $tmpfile
+rmdir $tmpdir
+>&2 echo "*** Exit soma-set-domain-label"

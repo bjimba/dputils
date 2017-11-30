@@ -1,0 +1,38 @@
+#! /bin/bash
+
+if [ "$dpenviron" = "" ]; then
+  echo Please export dpenviron
+  exit 1
+fi
+echo dpenviron $dpenviron
+
+if [ "$2" = "" ]; then
+  echo Usage: $0 domain backup.zip
+  exit 1
+fi
+
+DCM_HOME=~/dcm
+DPCONFIG=~/.dpbuild
+DPBUILD=$(dirname $(readlink -f $0))
+DPBUILDTMP=$(mktemp -d)
+CAPTUREDIR=$(pwd)/capture
+mkdir $CAPTUREDIR
+
+dpdomain=$1
+# dcm needs full path
+backupzip=$(readlink -f $2)
+
+ant -f $DCM_HOME/deploy.ant.xml \
+ -Ddcm.dir=$DCM_HOME \
+ -Dwork.dir=$DPBUILDTMP \
+ -Dcapturesoma=$CAPTUREDIR/capture.log \
+ -propertyfile $DPCONFIG/$dpenviron.properties \
+ -Ddomain=$dpdomain \
+ -Dbackup.file=$backupzip \
+ restore-backup
+
+if [ $? -ne 0 ]; then
+  exit 1
+fi
+
+rm -rf $DPBUILDTMP

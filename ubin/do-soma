@@ -1,0 +1,29 @@
+#! /bin/bash
+>&2 echo "*** Enter do-soma"
+if [ "$dpenviron" = "" ]; then
+  >&2 echo Please export dpenviron
+  exit 1
+fi
+>&2 echo dpenviron $dpenviron
+
+if [ "$1" = "" ]; then
+  >&2 echo No request XML specified
+  >&2 echo Usage: $0 soma-req.xml
+  exit 1
+fi
+
+DPCONFIG=~/.dpbuild
+DPBUILD=$(dirname $(readlink -f $0))
+
+# default soma port
+port=5550
+
+# steal the DCM config for our own use by sourcing
+. $DPCONFIG/$dpenviron.properties
+
+>&2 echo SOMA host $host
+>&2 echo SOMA port $port
+
+curl -k -u $uid:$pwd -d@$1 https://$host:$port/service/mgmt/current
+
+>&2 echo "*** Exit do-soma"

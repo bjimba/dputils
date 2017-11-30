@@ -1,0 +1,35 @@
+#! /bin/bash
+echo "*** Enter dcm-reset-domain"
+if [ "$dpenviron" = "" ]; then
+  echo Please export dpenviron
+  exit 1
+fi
+echo dpenviron $dpenviron
+
+if [ "$1" = "" ]; then
+  echo No domain specified
+  echo Usage: $0 domain
+  exit 1
+fi
+
+DCM_HOME=~/dcm
+DPCONFIG=~/.dpbuild
+DPBUILD=$(dirname $(readlink -f $0))
+DPBUILDTMP=$(mktemp -d)
+
+dpdomain=$1
+
+ant -f $DCM_HOME/deploy.ant.xml \
+ -Ddcm.dir=$DCM_HOME \
+ -Dwork.dir=$DPBUILDTMP \
+ -propertyfile $DPCONFIG/$dpenviron.properties \
+ -Ddomain=$dpdomain \
+ domain-reset
+
+if [ $? -ne 0 ]; then
+  echo "ant domain-reset call returned non-zero : " $?
+  exit 1
+fi
+
+rm -rf $DPBUILDTMP
+echo "*** Exit dcm-reset-domain"

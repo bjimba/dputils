@@ -1,0 +1,46 @@
+#! /bin/bash
+echo "*** Enter dcm-upload-dir"
+if [ "$dpenviron" = "" ]; then
+  echo Please export dpenviron
+  exit 1
+fi
+echo dpenviron $dpenviron
+
+if [ "$3" = "" ]; then
+  echo Missing arguments
+  echo Usage: $0 dpdomain srcdir dpdest
+  echo Example: dcm-upload-dir DBPL src/local local:///
+  exit 1
+fi
+
+DCM_HOME=~/dcm
+DPCONFIG=~/.dpbuild
+DPBUILD=$(dirname $(readlink -f $0))
+DPBUILDTMP=$(mktemp -d)
+
+dpdomain=$1
+# dcm needs the full path
+srcdir=$(readlink -f $2)
+dpdest=$3
+
+if [ ! -d $srcdir ]; then
+  echo Folder $srcdir does not exist
+  exit 1
+fi
+
+ant -f $DCM_HOME/deploy.ant.xml \
+ -Ddcm.dir=$DCM_HOME \
+ -Dwork.dir=$DPBUILDTMP \
+ -propertyfile $DPCONFIG/$dpenviron.properties \
+ -Ddomain=$dpdomain \
+ -Dupload-dir.from=$srcdir \
+ -Dupload-dir.to=$dpdest \
+ upload-dir
+
+if [ $? -ne 0 ]; then
+  echo "ant upload-dir returned non-zero : " $?
+  exit 1
+fi
+
+rm -rf $DPBUILDTMP
+echo "*** Exit dcm-upload-dir"

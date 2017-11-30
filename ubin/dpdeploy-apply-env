@@ -1,0 +1,129 @@
+#! /bin/bash
+echo "*** Enter dpdeploy-apply-env"
+if [ "$dpenviron" = "" ]; then
+  echo Please export dpenviron
+  exit 1
+fi
+echo dpenviron $dpenviron
+
+if [ "$2" = "" ]; then
+  echo Usage: $0 dpdomain source-env-dir
+  echo Example: dpdeploy-apply-env DBPLICE src/env/dev3W
+  exit 1
+fi
+
+DPBUILD=$(dirname $(readlink -f $0))
+dpdomain=$1
+envdir=$2
+
+if [ ! -d "$envdir" ]; then
+  echo Environment folder $envdir does not exist
+  exit 1
+fi
+
+echo Start
+date
+
+echo Upload local filesystem
+srcdir=$envdir/env_files/local
+if [ -d $srcdir ]; then
+  $DPBUILD/dcm-upload-dir $dpdomain $envdir/env_files/local local:///
+  if [ $? -ne 0 ]; then
+    echo "dcm-upload-dir returned non-zero : " $?
+    exit 1
+  fi
+fi
+
+echo Import common env DPO
+$DPBUILD/import-xcfgs $dpdomain $envdir/dpconfig/deployment-policy
+if [ $? -ne 0 ]; then
+  echo "import-xcfgs for deployment policy returned non-zero : " $?
+  exit 1
+fi
+
+echo Import XCFGs
+objdir=$envdir/dpconfig
+if [ -d $objdir ]; then
+    $DPBUILD/import-xcfgs $dpdomain $envdir/dpconfig/log-category
+    if [ $? -ne 0 ]; then
+      echo "import-xcfgs for log-category returned non-zero : " $?
+      exit 1
+    fi
+    $DPBUILD/import-xcfgs-dpo $dpdomain $envdir/dpconfig/log-target DBPL_DPO_Common
+    if [ $? -ne 0 ]; then
+      echo "import-xcfgs-dpo for log-target returned non-zero : " $?
+      exit 1
+    fi
+    $DPBUILD/import-xcfgs-dpo $dpdomain $envdir/dpconfig/mq-qm DBPL_DPO_Common
+    if [ $? -ne 0 ]; then
+      echo "import-xcfgs-dpo for mq-qm returned non-zero : " $?
+      exit 1
+    fi
+    $DPBUILD/import-xcfgs-dpo $dpdomain $envdir/dpconfig/mq-qm-group DBPL_DPO_Common
+    if [ $? -ne 0 ]; then
+      echo "import-xcfgs-dpo for mq-qm-group returned non-zero : " $?
+      exit 1
+    fi
+    $DPBUILD/import-xcfgs $dpdomain $envdir/dpconfig/crypto-key
+    if [ $? -ne 0 ]; then
+      echo "import-xcfgs for crypto-key returned non-zero : " $?
+      exit 1
+    fi
+    $DPBUILD/import-xcfgs $dpdomain $envdir/dpconfig/crypto-cert
+    if [ $? -ne 0 ]; then
+      echo "import-xcfgs for crypto-cert returned non-zero : " $?
+      exit 1
+    fi
+    $DPBUILD/import-xcfgs $dpdomain $envdir/dpconfig/crypto-shared-secret-key
+    if [ $? -ne 0 ]; then
+      echo "import-xcfgs for crypto-shared-secret-key returned non-zero : " $?
+      exit 1
+    fi
+    $DPBUILD/import-xcfgs-dpo $dpdomain $envdir/dpconfig/ssl-proxy-profile DBPL_DPO_Common_SSLProxy
+    if [ $? -ne 0 ]; then
+      echo "import-xcfgs-dpo for ssl-proxy-profile returned non-zero : " $?
+      exit 1
+    fi
+    $DPBUILD/import-xcfgs-dpo $dpdomain $envdir/dpconfig/wsrr-server DBPL_DPO_Common
+    if [ $? -ne 0 ]; then
+      echo "import-xcfgs-dpo for wsrr-server returned non-zero : " $?
+      exit 1
+    fi
+    $DPBUILD/import-xcfgs-dpo $dpdomain $envdir/dpconfig/xml-mgr DBPL_DPO_Common_XMLMgr
+    if [ $? -ne 0 ]; then
+      echo "import-xcfgs-dpo for xml-mgr returned non-zero : " $?
+      exit 1
+    fi
+    $DPBUILD/import-xcfgs-dpo $dpdomain $envdir/dpconfig/mpgw DBPL_DPO_Mpgw
+    if [ $? -ne 0 ]; then
+      echo "import-xcfgs-dpo for mpgw returned non-zero : " $?
+      exit 1
+    fi
+fi
+
+echo Apply modify-config
+somadir=$envdir/env_files/soma
+if [ -d $somadir ]; then
+  $DPBUILD/do-soma $envdir/env_files/soma/soma-modify-config.xml
+  if [ $? -ne 0 ]; then
+      #This may not error out as the code is not bubbled up currently
+      echo "do-soma for soma-modify-config returned non-zero : " $1
+      exit 1
+  fi
+  $DPBUILD/do-soma $envdir/env_files/soma/somacommon-modify-config.xml
+  if [ $? -ne 0 ]; then
+     echo "do-soma for somacommon-modify-config returned non-zero : " $1
+     exit 1
+  fi
+fi
+
+echo Save config to persistent
+$DPBUILD/dcm-save-domain $dpdomain
+if [ $? -ne 0 ]; then
+  echo "dcm-save-domain returned non-zero : " $?
+  exit 1
+fi
+
+echo End
+date
+echo "*** Exit dpdeploy-apply-env"

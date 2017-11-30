@@ -1,0 +1,41 @@
+#! /bin/bash
+echo "*** Enter dcm-import-xcfg"
+if [ "$dpenviron" = "" ]; then
+  echo Please export dpenviron
+  exit 1
+fi
+echo dpenviron $dpenviron
+
+if [ "$2" = "" ]; then
+  echo Usage:
+  echo $0 domain xcfg-filespec
+  exit 1
+fi
+
+DCM_HOME=~/dcm
+DPCONFIG=~/.dpbuild
+DPBUILD=$(dirname $(readlink -f $0))
+DPBUILDTMP=$(mktemp -d)
+
+# $1 - domain
+# $2 - xcfg to deploy
+
+dpdomain=$1
+# dcm needs full path
+xcfgfile=$(readlink -f $2)
+
+ant -f $DCM_HOME/deploy.ant.xml \
+ -Ddcm.dir=$DCM_HOME \
+ -Dwork.dir=$DPBUILDTMP \
+ -propertyfile $DPCONFIG/$dpenviron.properties \
+ -Ddomain=$dpdomain \
+ -Dimport.file=${xcfgfile} \
+ import-from-def
+
+if [ $? -ne 0 ]; then
+  echo "ant import-from-def returned non-zero : " $?
+  exit 1
+fi
+
+rm -rf $DPBUILDTMP
+echo "*** Exit dcm-import-xcfg"

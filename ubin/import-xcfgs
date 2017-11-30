@@ -1,0 +1,25 @@
+#! /bin/bash
+echo "*** Enter import-xcfgs"
+if [ "$2" = "" ]; then
+  echo Usage:
+  echo $0 domain xcfg-src-path
+  exit 1
+fi
+
+DPBUILD=$(dirname $(readlink -f $0))
+
+# $1 is domain
+# $2 is full pathname of a directory containing XCFGs
+dpdomain=$1
+xcfgdir=$2
+
+shopt -s nullglob
+for file in $xcfgdir/*.xcfg; do
+  echo $file
+  $DPBUILD/dcm-import-xcfg $dpdomain $file
+  if [ $? -ne 0 ]; then
+    echo "Error importing in dcm-import-xcfg for:" $dpdomain $file
+    exit 1
+  fi
+done
+echo "*** Exit import-xcfgs"

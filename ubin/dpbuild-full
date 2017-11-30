@@ -1,0 +1,107 @@
+#! /bin/bash
+echo "*** Enter dpbuild-full"
+if [ "$dpenviron" = "" ]; then
+echo Please export dpenviron
+exit 1
+fi
+echo dpenviron $dpenviron
+
+if [ "$2" = "" ]; then
+echo Usage: $0 dpdomain source-dir
+echo Example: dpbuild-full DBPLICE ./src
+exit 1
+fi
+
+DPBUILD=$(dirname $(readlink -f $0))
+dpdomain=$1
+srcdir=$2
+
+echo Start
+date
+
+echo Reset domain $dpdomain
+$DPBUILD/dcm-reset-domain $dpdomain
+if [ $? -ne 0 ]; then
+  echo "dcm-reset-domain returned non-zero : " $?
+  exit 1
+fi
+
+# add clear local filesystem
+$DPBUILD/remove-all-local-files $dpdomain
+if [ $? -ne 0 ]; then
+  echo "remove-all-local-files returned non-zero : " $?
+  exit 1
+fi
+
+echo Upload local filesystem
+$DPBUILD/dcm-upload-dir $dpdomain $srcdir/local local:///
+if [ $? -ne 0 ]; then
+  echo "dcm-upload-dir returned non-zero : " $?
+  exit 1
+fi
+
+echo Import common DPO
+$DPBUILD/import-xcfgs $dpdomain $srcdir/dpconfig/common/deployment-policy
+if [ $? -ne 0 ]; then
+  echo "import-xcfgs for deployment-policy returned non-zero : " $?
+  exit 1
+fi
+
+echo Import common XCFGs
+$DPBUILD/import-xcfgs $dpdomain $srcdir/dpconfig/common/log-category
+if [ $? -ne 0 ]; then
+  echo "import-xcfgs for log-category returned non-zero : " $?
+  exit 1
+fi
+$DPBUILD/import-xcfgs-dpo $dpdomain $srcdir/dpconfig/common/log-target DBPL_DPO_Common
+if [ $? -ne 0 ]; then
+  echo "import-xcfgs-dpo for log-target returned non-zero : " $?
+  exit 1
+fi
+$DPBUILD/import-xcfgs-dpo $dpdomain $srcdir/dpconfig/common/mq-qm DBPL_DPO_Common
+if [ $? -ne 0 ]; then
+  echo "import-xcfgs-dpo for mq-qm returned non-zero : " $?
+  exit 1
+fi
+$DPBUILD/import-xcfgs-dpo $dpdomain $srcdir/dpconfig/common/mq-qm-group DBPL_DPO_Common
+if [ $? -ne 0 ]; then
+  echo "import-xcfgs-dpo for mq-qm-group returned non-zero : " $?
+  exit 1
+fi
+$DPBUILD/import-xcfgs-dpo $dpdomain $srcdir/dpconfig/common/ssl-proxy-profile DBPL_DPO_Common_SSLProxy
+if [ $? -ne 0 ]; then
+  echo "import-xcfgs-dpo for ssl-proxy-profile returned non-zero : " $?
+  exit 1
+fi
+$DPBUILD/import-xcfgs-dpo $dpdomain $srcdir/dpconfig/common/wsrr-server DBPL_DPO_Common
+if [ $? -ne 0 ]; then
+  echo "import-xcfgs-dpo for wssr-server returned non-zero : " $?
+  exit 1
+fi
+$DPBUILD/import-xcfgs-dpo $dpdomain $srcdir/dpconfig/common/xml-mgr DBPL_DPO_Common_XMLMgr
+if [ $? -ne 0 ]; then
+  echo "import-xcfgs-dpo for xml-mgr returned non-zero : " $?
+  exit 1
+fi
+
+echo Import service XCFGs
+$DPBUILD/import-xcfgs-dpo $dpdomain $srcdir/dpconfig/services/mpgw DBPL_DPO_Mpgw
+if [ $? -ne 0 ]; then
+  echo "import-xcfgs-dpo for mpgw returned non-zero : " $?
+  exit 1
+fi
+$DPBUILD/import-xcfgs $dpdomain $srcdir/dpconfig/services/slm_policy
+if [ $? -ne 0 ]; then
+  echo "import-xcfgs for slm-policy returned non-zero : " $?
+  exit 1
+fi
+
+echo Save config to persistent memory
+$DPBUILD/dcm-save-domain $dpdomain
+if [ $? -ne 0 ]; then
+  echo "dcm-save-domain returned non-zero return code: " $?
+  exit 1
+fi
+echo End
+date
+echo "*** Exit dpbuild-full"

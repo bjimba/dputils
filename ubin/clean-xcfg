@@ -1,0 +1,62 @@
+#! /bin/bash
+
+# $1 - xcfg object
+
+scriptdir=$(dirname $(readlink -f $0))
+srcxcfg=$1
+
+clean-xcfg() {
+
+  base=$(basename $srcxcfg .xcfg)
+
+  xsltproc $scriptdir/normalize-namespaces.xsl $srcxcfg \
+    | xsltproc $scriptdir/dpconfig-remove-files.xsl - \
+    | xsltproc $scriptdir/xmlpp.xsl - \
+    > clean-${base}.xcfg
+
+  # search for references to local:
+  (
+    echo \<locals\>
+    xmllint clean-${base}.xcfg --xpath "//*[starts-with(., 'local:')]"
+    echo \</locals\>
+  ) | xsltproc $scriptdir/xmlpp.xsl - > locals-${base}.xml
+
+  sort locals-${base}.xml \
+    | uniq \
+    | grep -v ^\<locals\>$ \
+    | grep -v ^\</locals\>$ \
+    | grep -v ^\<\?xml \
+    > locals-${base}.uniq
+
+  # search for references to cert:
+  (
+    echo \<certs\>
+    xmllint clean-${base}.xcfg --xpath "//*[starts-with(., 'cert:')]"
+    echo \</certs\>
+  ) | xsltproc $scriptdir/xmlpp.xsl - > certs-${base}.xml
+
+  sort certs-${base}.xml \
+    | uniq \
+    | grep -v ^\<certs\>$ \
+    | grep -v ^\</certs\>$ \
+    | grep -v ^\<\?xml \
+    > certs-${base}.uniq
+
+  # search for references to sharedcert:
+  (
+    echo \<sharedcerts\>
+    xmllint clean-${base}.xcfg --xpath "//*[starts-with(., 'sharedcert:')]"
+    echo \</sharedcerts\>
+  ) | xsltproc $scriptdir/xmlpp.xsl - > sharedcerts-${base}.xml
+
+  sort sharedcerts-${base}.xml \
+    | uniq \
+    | grep -v ^\<sharedcerts\>$ \
+    | grep -v ^\</sharedcerts\>$ \
+    | grep -v ^\<\?xml \
+    > sharedcerts-${base}.uniq
+
+}
+
+echo Cleaning $1
+clean-xcfg $1

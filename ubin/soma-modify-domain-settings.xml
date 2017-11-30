@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+  <soapenv:Body>
+    <dp:request
+      xmlns:dp="http://www.datapower.com/schemas/management"
+      domain="DBPL">
+      <dp:modify-config>
+        <DomainSettings>
+          <UserSummary>changed</UserSummary>
+          <!--
+          <mAdminState>enabled</mAdminState>
+          <mAdminState>disabled</mAdminState>
+          -->
+        </DomainSettings>
+      </dp:modify-config>
+    </dp:request>
+  </soapenv:Body>
+</soapenv:Envelope>

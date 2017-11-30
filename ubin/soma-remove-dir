@@ -1,0 +1,54 @@
+#! /bin/bash
+
+if [ "$dpenviron" = "" ]; then
+  >&2 echo Please export dpenviron
+  exit 1
+fi
+>&2 echo dpenviron $dpenviron
+
+if [ "$2" = "" ]; then
+  >&2 echo Missing argument
+  >&2 echo Usage: $0 dpdomain dirspec
+  >&2 echo where dirspec like this: local:///dir-to-remove
+  exit 1
+fi
+
+dpdomain=$1
+dirspec=$2
+
+DPCONFIG=~/.dpbuild
+DPBUILD=$(dirname $(readlink -f $0))
+
+# default soma port
+port=5550
+
+# steal the DCM config for our own use by sourcing
+. $DPCONFIG/$dpenviron.properties
+
+>&2 echo SOMA host $host
+>&2 echo SOMA port $port
+
+tmpdir=$(mktemp -d)
+tmpfile=$tmpdir/tmp-remove-dir.xml
+
+cat <<EOF >$tmpfile
+<?xml version="1.0" encoding="UTF-8"?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+  <soapenv:Body>
+    <dp:request
+      xmlns:dp="http://www.datapower.com/schemas/management"
+      domain="${dpdomain}">
+      <dp:do-action>
+        <RemoveDir>
+          <Dir>${dirspec}</Dir>
+        </RemoveDir>
+      </dp:do-action>
+    </dp:request>
+  </soapenv:Body>
+</soapenv:Envelope>
+EOF
+
+curl -k -u $uid:$pwd -d@$tmpfile https://$host:$port/service/mgmt/current
+
+rm $tmpfile
+rmdir $tmpdir

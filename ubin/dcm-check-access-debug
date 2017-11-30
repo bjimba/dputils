@@ -1,0 +1,28 @@
+#! /bin/bash
+
+if [ "$dpenviron" = "" ]; then
+  echo Please export dpenviron
+  exit 1
+fi
+echo dpenviron $dpenviron
+
+DCM_HOME=~/dcm
+DPCONFIG=~/.dpbuild
+DPBUILD=$(dirname $(readlink -f $0))
+DPBUILDTMP=$(mktemp -d)
+CAPTUREDIR=$(pwd)/capture
+mkdir $CAPTUREDIR
+
+ant -f $DCM_HOME/deploy.ant.xml \
+ -Ddcm.dir=$DCM_HOME \
+ -Dwork.dir=$DPBUILDTMP \
+ -Dcapturesoma=$CAPTUREDIR/capture.log \
+ -propertyfile $DPCONFIG/$dpenviron.properties \
+ -Ddomain=default \
+ check-access
+
+if [ $? -ne 0 ]; then
+  exit 1
+fi
+
+rm -rf $DPBUILDTMP

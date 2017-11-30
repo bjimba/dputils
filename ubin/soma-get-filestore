@@ -1,0 +1,55 @@
+#! /bin/bash
+# WARNING: Output of this script is piped into subsequent commands, dont output directly to stdout
+>&2 echo "*** Enter soma-get-filestore"
+if [ "$dpenviron" = "" ]; then
+  >&2 echo Please export dpenviron
+  exit 1
+fi
+>&2 echo dpenviron $dpenviron
+
+if [ "$2" = "" ]; then
+  >&2 echo Arguments missing
+  >&2 echo Usage: $0 domain location
+  >&2 echo location local: cert: etc. \(Colon required\)
+  exit 1
+fi
+
+dpdomain=$1
+dplocation=$2
+
+DPCONFIG=~/.dpbuild
+DPBUILD=$(dirname $(readlink -f $0))
+
+# default soma port
+port=5550
+
+# steal the DCM config for our own use by sourcing
+. $DPCONFIG/$dpenviron.properties
+
+>&2 echo SOMA host $host
+>&2 echo SOMA port $port
+
+tmpdir=$(mktemp -d)
+tmpfile=$tmpdir/tmp-get-filestore.xml
+
+cat <<EOF >$tmpfile
+<?xml version="1.0" encoding="UTF-8"?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+  <soapenv:Body>
+    <dp:request
+      xmlns:dp="http://www.datapower.com/schemas/management"
+      domain="${dpdomain}">
+      <dp:get-filestore location="${dplocation}"/>
+    </dp:request>
+  </soapenv:Body>
+</soapenv:Envelope>
+EOF
+
+>&2 echo "soma-get-filestore contents of request:"
+>&2 cat $tmpfile
+
+curl -k -u $uid:$pwd -d@$tmpfile https://$host:$port/service/mgmt/current
+
+rm $tmpfile
+rmdir $tmpdir
+>&2 echo "*** Exit soma-get-filestore"

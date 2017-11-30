@@ -1,0 +1,42 @@
+#! /bin/bash
+>&2 echo "*** Enter remove-all-local-files"
+if [ "$dpenviron" = "" ]; then
+  >&2 echo Please export dpenviron
+  exit 1
+fi
+>&2 echo dpenviron $dpenviron
+
+if [ "$1" = "" ]; then
+  >&2 echo Usage: $0 dpdomain
+  exit 1
+fi
+
+DPBUILD=$(dirname $(readlink -f $0))
+dpdomain=$1
+
+tmpdir=$(mktemp -d)
+tmpfile=$tmpdir/tmp-remove-all-local-files.xml
+
+$DPBUILD/soma-get-filestore $dpdomain local: \
+  | xsltproc --stringparam dpdomain "$dpdomain" \
+      $DPBUILD/create-remove-soma-req.xsl - \
+  >$tmpfile
+if [ $? -ne 0 ]; then
+  >&2 echo "soma-get-filestore or the xsltproc that it is piped into returned a non-zero code : " $?
+  exit 1
+fi
+
+>&2 echo "About to do-soma " $tmpfile
+
+$DPBUILD/do-soma $tmpfile
+if [ $? -ne 0 ]; then
+  #we may not current reach here
+  >&2 echo "do-soma with the remove-files request returned non-zero : " $?
+  >&2 echo "file contents : " $tmpfile
+  >&2 cat $tmpfile
+  exit 1
+fi
+
+#rm $tmpfile
+#rmdir $tmpdir
+>&2 echo "*** Exit remove-all-local-files"
