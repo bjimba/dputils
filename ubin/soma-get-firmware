@@ -8,24 +8,4 @@ dprequest=$(cat <<EOF0
   <dp:get-status class="FirmwareVersion"/>
 EOF0
 )
-
->&2 somaReq $dpdomain $dprequest
-
-tmpdir=$(mktemp -d)
-tmpfile=$tmpdir/tmp-get-firmware.xml
-
-cat <<EOF >$tmpfile
-<env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/">
-  <env:Body>
-    <dp:request xmlns:dp="http://www.datapower.com/schemas/management"
-      domain="default">
-      <dp:get-status class="FirmwareVersion"/>
-    </dp:request>
-  </env:Body>
-</env:Envelope>
-EOF
-
-curl -k -u $uid:$pwd -d@$tmpfile https://$host:$port/service/mgmt/current
-
-rm $tmpfile
-rmdir $tmpdir
+somaReq $dpdomain "$dprequest"

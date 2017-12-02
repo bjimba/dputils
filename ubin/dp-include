@@ -25,23 +25,27 @@ source $dpConfig/$dpenviron.properties
 >&2 echo SOMA host $host
 >&2 echo SOMA port $port
 
-# make the soma request
+# create the soma request
 # we will get the domain, and the contents to be put into dp:request
-# we will return the tmpfile name, ready for curl
 function somaReq() {
   dpdomain=$1
   dpreq=$2
-  cat <<EOF1
+
+  tmpfile=$(mktemp)
+
+  cat <<EOF1 >$tmpfile
 <env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/">
   <env:Body>
     <dp:request xmlns:dp="http://www.datapower.com/schemas/management"
       domain="${dpdomain}">
 EOF1
-  echo $dpreq
-  cat <<EOF2
+  echo "$dpreq" >>$tmpfile
+  cat <<EOF2 >>$tmpfile
     </dp:request>
   </env:Body>
 </env:Envelope>
 EOF2
+  >&2 cat $tmpfile
+  curl -k -u $uid:$pwd -d@$tmpfile https://$host:$port/service/mgmt/current
+  rm $tmpfile
 }
-
