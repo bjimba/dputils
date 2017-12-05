@@ -1,38 +1,12 @@
 #! /bin/bash
 
-if [ "$dpenviron" = "" ]; then
-  >&2 echo Please export dpenviron
-  exit 1
-fi
->&2 echo dpenviron $dpenviron
+dpHome=$(dirname $(readlink -f $0))
+source $dpHome/dp-include
 
-DPCONFIG=~/.dpbuild
-DPBUILD=$(dirname $(readlink -f $0))
+dpdomain=default
 
-# default soma port
-port=5550
-
-# steal the DCM config for our own use by sourcing
-. $DPCONFIG/$dpenviron.properties
-
->&2 echo SOMA host $host
->&2 echo SOMA port $port
-
-tmpdir=$(mktemp -d)
-tmpfile=$tmpdir/tmp-get-xmlnames.xml
-
-cat <<EOF >$tmpfile
-<env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/">
-  <env:Body>
-    <dp:request xmlns:dp="http://www.datapower.com/schemas/management"
-      domain="default">
-      <dp:get-status class="XMLNamesStatus"/>
-    </dp:request>
-  </env:Body>
-</env:Envelope>
-EOF
-
-curl -k -u $uid:$pwd -d@$tmpfile https://$host:$port/service/mgmt/current
-
-rm $tmpfile
-rmdir $tmpdir
+dprequest=$(cat <<EOF0
+  <dp:get-status class="XMLNamesStatus"/>
+EOF0
+)
+somaReq $dpdomain "$dprequest"

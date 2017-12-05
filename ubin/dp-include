@@ -46,6 +46,12 @@ EOF1
 </env:Envelope>
 EOF2
   >&2 cat $tmpfile
-  curl -k -u $uid:$pwd -d@$tmpfile https://$host:$port/service/mgmt/current
+  somaSubmit $tmpfile
   rm $tmpfile
+}
+
+function somaSubmit() {
+  reqfile=$1
+
+  curl -k -u $uid:$pwd -d@$reqfile https://$host:$port/service/mgmt/current
 }

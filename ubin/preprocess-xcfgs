@@ -6,7 +6,7 @@ if [ "$2" = "" ]; then
   exit 1
 fi
 
-DPBUILD=$(dirname $(readlink -f $0))
+dpHome=$(dirname $(readlink -f $0))
 
 # $1 is full pathname of a directory containing XCFGs
 # $2 is temporary work directory
@@ -20,7 +20,7 @@ cd $workdir
 shopt -s nullglob
 for file in $xcfgdir/*.xcfg; do
   echo $file
-  $DPBUILD/clean-xcfg $file
+  $dpHome/clean-xcfg $file
   #if [ $? -ne 0 ]; then
   #  exit 1
   #fi
