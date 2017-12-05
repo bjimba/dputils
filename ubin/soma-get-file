@@ -1,0 +1,21 @@
+#! /bin/bash
+
+dpHome=$(dirname $(readlink -f $0))
+source $dpHome/dp-include
+
+if [ "$2" = "" ]; then
+  >&2 echo Usage: $0 domain dpfilespec dstfilespec
+  exit 1
+fi
+
+dpdomain=$1
+dpfilespec=$2
+dstfilespec=$3
+
+dprequest=$(cat <<EOF0
+  <dp:get-file name="${dpfilespec}"/>
+EOF0
+)
+somaReq $dpdomain "$dprequest" \
+  | xmllint --xpath "/*/*/*/*[local-name()='file']/text()" - \
+  | base64 -d >$dstfilespec
