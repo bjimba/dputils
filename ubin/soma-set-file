@@ -1,0 +1,23 @@
+#! /bin/bash
+
+dpHome=$(dirname $(readlink -f $0))
+source $dpHome/dp-include
+
+if [ "$3" = "" ]; then
+  >&2 echo Usage: $0 domain srcfilespec dpfilespec
+  exit 1
+fi
+
+dpdomain=$1
+srcfilespec=$2
+dpfilespec=$3
+
+dprequest=$(cat <<EOF0
+  <dp:set-file name="${dpfilespec}">
+EOF0
+base64 ${srcfilespec}
+cat <<EOF1
+  </dp:set-file>
+EOF1
+)
+somaReq $dpdomain "$dprequest"
