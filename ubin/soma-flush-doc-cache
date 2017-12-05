@@ -1,0 +1,22 @@
+#! /bin/bash
+
+dpHome=$(dirname $(readlink -f $0))
+source $dpHome/dp-include
+
+if [ "$2" = "" ]; then
+  >&2 echo Usage: $0 domain xmlmgr
+  exit 1
+fi
+
+dpdomain=$1
+xmlmgr=$2
+
+dprequest=$(cat <<EOF0
+  <dp:do-action>
+    <FlushDocumentCache>
+      <XMLManager>${xmlmgr}</XMLManager>
+    </FlushDocumentCache>
+  </dp:do-action>
+EOF0
+)
+somaReq $dpdomain "$dprequest"
