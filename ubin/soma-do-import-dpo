@@ -1,14 +1,10 @@
 #! /bin/bash
 
-if [ "$dpenviron" = "" ]; then
-  >&2 echo Please export dpenviron
-  exit 1
-fi
->&2 echo dpenviron $dpenviron
+dpHome=$(dirname $(readlink -f $0))
+source $dpHome/dp-include
 
 if [ "$3" = "" ]; then
-  >&2 echo No args
-  >&2 echo Usage: $0 dpdomain fspecxcfg dpolicy
+  >&2 echo Usage: $0 domain fspecxcfg dpolicy
   exit 1
 fi
 
@@ -16,46 +12,20 @@ dpdomain=$1
 fspecxcfg=$2
 dpo=$3
 
-DPCONFIG=~/.dpbuild
-DPBUILD=$(dirname $(readlink -f $0))
-
-# default soma port
-port=5550
-
-# steal the DCM config for our own use by sourcing
-. $DPCONFIG/$dpenviron.properties
-
->&2 echo SOMA host $host
->&2 echo SOMA port $port
-
-tmpdir=$(mktemp -d)
-tmpfile=$tmpdir/tmp-do-import.xml
-
-cat <<EOF1 >$tmpfile
-<env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/">
-  <env:Body>
-    <dp:request
-      xmlns:dp="http://www.datapower.com/schemas/management"
-      domain="${dpdomain}">
-      <dp:do-import
-        source-type="XML"
-        dry-run="false"
-        overwrite-files="false"
-        overwrite-objects="true"
-        rewrite-local-ip="false"
-        deployment-policy="${dpo}">
-        <dp:input-file>
+dprequest=$(cat <<EOF0
+  <dp:do-import
+    source-type="XML"
+    dry-run="false"
+    overwrite-files="false"
+    overwrite-objects="true"
+    rewrite-local-ip="false"
+    deployment-policy="${dpo}">
+    <dp:input-file>
+EOF0
+base64 ${fspecxcfg}
+cat <<EOF1
+    </dp:input-file>
+  </dp:do-import>
 EOF1
-base64 -e file >>$tmpfile
-cat <<EOF2 >>$tmpfile
-        </dp:input-file>
-      </dp:do-import>
-    </dp:request>
-  <env:Body>
-<env:Envelope>
-EOF2
-
-curl -k -u $uid:$pwd -d@$tmpfile https://$host:$port/service/mgmt/current
-
-rm $tmpfile
-rmdir $tmpdir
+)
+somaReq $dpdomain "$dprequest"
