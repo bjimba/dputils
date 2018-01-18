@@ -1,16 +1,21 @@
-#!/usr/bin/env python
+#! /usr/bin/env python3
 
-from __future__ import print_function
 import base64
-import logging
 import os
 import sys
-import urllib2
+import requests
 
 # if python < 2.5, get ElementTree.py from effbot.org and do this:
 #import ElementTree as ET
 # for newer pythons, it's standard
 import xml.etree.ElementTree as ET
+
+#old
+#from requests.packages.urllib3.exceptions import InsecureRequestWarning
+#requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+#new
+import urllib3
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # print to stderr
 def eprint(*args, **kwargs):
@@ -18,6 +23,7 @@ def eprint(*args, **kwargs):
 
 # constants not part of object
 ns = {'dp': 'http://www.datapower.com/schemas/management'}
+
 
 class dpxml:
     # if dryrun true, we don't send XML to DataPower
@@ -42,9 +48,11 @@ class dpxml:
             eprint("dpxml: callSoma: reqXml=" + reqXml)
         if self.dryrun:
             return '<dryrun xmlns:dp="' + ns['dp'] + '"><dp:result>OK, dry run</dp:result></dryrun>'
-        req = urllib2.Request(url=somaUrl, data=reqXml)
-        req.add_header('Authorization', 'Basic %s' % base64.encodestring(self.creds))
-        respXml = urllib2.urlopen(req).read()
+
+        creds = self.creds.split(':')
+        r = requests.post(somaUrl, data=reqXml, verify=False, auth=(creds[0], creds[1]))
+        respXml = r.text
+
         if self.verbose:
             eprint("dpxml: callSoma: respXml=" + respXml)
         return respXml
@@ -61,7 +69,7 @@ class dpxml:
 
     # alternatively, you can create and configure with args:
 
-#   dpx = dpxml.dpxml('10.0.0.42', 'my_dp_domain', 'jprussell:password00')
+    #   dpx = dpxml.dpxml('10.0.0.42', 'my_dp_domain', 'jprussell:password00')
 
     # now, let's do something with it
 
