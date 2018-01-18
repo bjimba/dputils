@@ -1,0 +1,13 @@
+Deploy flow:
+    checkout SVN
+    copy ./XSL, ./XSD, ./WTX, ./XML and ./$env/XML to local:///
+    if exists ./$env/DeploymentPolicy/
+        for each file there:
+            scan for local files, warn
+            save basename (to be used with config deploy -- note, will only save last one)
+            ZIP -> DP import
+    if exists ./Config/
+        for each file there:
+            ZIP -> DP import, using deployment-policy name saved above if needed
+    trigger DP-save-config
+

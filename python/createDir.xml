@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<env:Envelope xmlns:env="http://schemas.xmlsoap.org/soap/envelope/">
+    <env:Body>
+       <dp:request domain="%domain%" xmlns:dp="http://www.datapower.com/schemas/management">
+          <dp:do-action>
+             <CreateDir>
+                <Dir>%dir%</Dir>
+             </CreateDir>
+          </dp:do-action>
+       </dp:request>
+    </env:Body>
+</env:Envelope>

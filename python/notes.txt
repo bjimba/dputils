@@ -1,0 +1,16 @@
+Modularization:
+
+    dpxml.py - provides SOMA functions
+
+Deployment:
+    Parameters - Project, Service, Tag, Destination
+    Flow:
+        Subversion export
+        Validate tree (no locals in zips, structure marker)
+        For each DP box in Destination config:
+            Backup Destination - abort on failure
+            Copy tree to local:///service/
+            Import any deployment policy in env/DeploymentPolicy (save the name)
+            Import Config ZIPs (using saved name of dpolicy if exists)
+            Call SaveConfig to persist
+            (optional restart domain?)

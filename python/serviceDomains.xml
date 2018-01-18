@@ -1,0 +1,96 @@
+<!-- this file is used to list the domains for each service per environment. -->
+
+<!-- jpr: this isn't really services, it's project level -->
+
+<!-- DO NOT ADD ANY COMMENTS BELOW THIS LINE!! This is not parsed by a real XML parser. Please keep this exact format --> 
+<ServiceDomains>
+   <Service name = "FEMS">
+      <SB>SANDBOX2</SB>
+      <DEV>DEV</DEV>
+      <SIT>SIT</SIT>
+      <UAT>UAT</UAT>
+      <PREPROD>PREPROD</PREPROD>
+      <PROD></PROD>
+   </Service>
+   <Service name = "NASCOInterAct">
+      <SB>SANDBOX2</SB>
+      <DEV>DEV</DEV>
+      <SIT>SIT</SIT>
+      <UAT>UAT</UAT>
+      <PREPROD>PREPROD</PREPROD>
+      <PROD></PROD>
+   </Service>
+   <Service name = "Framework">
+      <SB>SANDBOX2</SB>
+      <DEV>DEV</DEV>
+      <SIT>SIT</SIT>
+      <UAT>UAT</UAT>
+      <PREPROD>PREPROD</PREPROD>
+      <PROD></PROD>
+   </Service>
+   <Service name = "NCCT">
+      <SB>SANDBOX2</SB>
+      <DEV>DEV</DEV>
+      <SIT>SIT</SIT>
+      <UAT>UAT</UAT>
+      <PREPROD>PREPROD</PREPROD>
+      <PROD></PROD>
+   </Service>
+   <Service name = "MemberCreate">
+      <SB>SANDBOX2</SB>
+      <DEV>DEV</DEV>
+      <SIT>SIT</SIT>
+      <UAT>UAT</UAT>
+      <PREPROD>PREPROD</PREPROD>
+      <PROD></PROD>
+   </Service>
+   <Service name = "MemberSearchBroker">
+      <SB>SANDBOX2</SB>
+      <DEV>DEV</DEV>
+      <SIT>SIT</SIT>
+      <UAT>UAT</UAT>
+      <PREPROD>PREPROD</PREPROD>
+      <PROD></PROD>
+   </Service>
+   <Service name = "EnterpriseMemberSearch">
+      <SB>SANDBOX2</SB>
+      <DEV>DEV</DEV>
+      <SIT>SIT</SIT>
+      <UAT>UAT</UAT>
+      <PREPROD>PREPROD</PREPROD>
+      <PROD></PROD>
+   </Service>
+   <Service name = "enpi">
+      <SB>SANDBOX2</SB>
+      <DEV>DEV</DEV>
+      <SIT>SIT</SIT>
+      <UAT>UAT</UAT>
+      <PREPROD>PREPROD</PREPROD>
+      <PROD></PROD>
+   </Service>
+   <Service name = "enterpriseprovidersearch">
+      <SB>SANDBOX2</SB>
+      <DEV>DEV</DEV>
+      <SIT>SIT</SIT>
+      <UAT>UAT</UAT>
+      <PREPROD>PREPROD</PREPROD>
+      <PROD></PROD>
+   </Service>
+   <Service name = "ProviderBrokerService">
+      <SB>SANDBOX2</SB>
+      <DEV>DEV</DEV>
+      <SIT>SIT</SIT>
+      <UAT>UAT</UAT>
+      <PREPROD>PREPROD</PREPROD>
+      <PROD></PROD>
+   </Service>
+   <Service name = "MECHABroker">
+      <SB>SANDBOX2</SB>
+      <DEV>DEV</DEV>
+      <SIT>SIT</SIT>
+      <UAT>UAT</UAT>
+      <PREPROD>PREPROD</PREPROD>
+      <PROD></PROD>
+   </Service>
+
+</ServiceDomains>

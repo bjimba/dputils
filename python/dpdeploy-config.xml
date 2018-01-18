@@ -1,0 +1,129 @@
+<dpdeploy>
+    <!--
+         Destination nodes describe where to deploy
+    -->
+    <Destination name="SB">
+        <Env>SB</Env>
+        <DisplayName>Sandbox</DisplayName>
+        <DpHost>10.71.6.239</DpHost>
+    </Destination>
+    <Destination name="DEV">
+        <Env>DEV</Env>
+        <DisplayName>Dev</DisplayName>
+        <DpHost>10.71.6.239</DpHost>
+        <DpHost>10.71.1.27</DpHost>
+    </Destination>
+
+    <Env name="SB">
+        <Domain>SANDBOX</Domain>
+    </Env>
+    <Env name="DEV">
+        <Domain>DEV</Domain>
+    </Env>
+
+    <!-- each service can override Env if needed -->
+    <Service name="FEMS">
+        <Env name="SB">
+            <Domain>SANDBOX2</Domain>
+        </Env>
+    </Service>
+
+        <Domain env="SB">SANDBOX2</Domain>
+        <Domain env="DEV">DEV</Domain>
+        <Domain env="SIT">SIT</Domain>
+        <Domain env="UAT">UAT</Domain>
+        <Domain env="PREPROD">PREPROD</Domain>
+        <Domain env="PROD"/>
+    </Service>
+    
+<ServiceDomains>
+   <Service name = "FEMS">
+      <SB>SANDBOX2</SB>
+      <DEV>DEV</DEV>
+      <SIT>SIT</SIT>
+      <UAT>UAT</UAT>
+      <PREPROD>PREPROD</PREPROD>
+      <PROD></PROD>
+   </Service>
+   <Service name = "NASCOInterAct">
+      <SB>SANDBOX2</SB>
+      <DEV>DEV</DEV>
+      <SIT>SIT</SIT>
+      <UAT>UAT</UAT>
+      <PREPROD>PREPROD</PREPROD>
+      <PROD></PROD>
+   </Service>
+   <Service name = "Framework">
+      <SB>SANDBOX2</SB>
+      <DEV>DEV</DEV>
+      <SIT>SIT</SIT>
+      <UAT>UAT</UAT>
+      <PREPROD>PREPROD</PREPROD>
+      <PROD></PROD>
+   </Service>
+   <Service name = "NCCT">
+      <SB>SANDBOX2</SB>
+      <DEV>DEV</DEV>
+      <SIT>SIT</SIT>
+      <UAT>UAT</UAT>
+      <PREPROD>PREPROD</PREPROD>
+      <PROD></PROD>
+   </Service>
+   <Service name = "MemberCreate">
+      <SB>SANDBOX2</SB>
+      <DEV>DEV</DEV>
+      <SIT>SIT</SIT>
+      <UAT>UAT</UAT>
+      <PREPROD>PREPROD</PREPROD>
+      <PROD></PROD>
+   </Service>
+   <Service name = "MemberSearchBroker">
+      <SB>SANDBOX2</SB>
+      <DEV>DEV</DEV>
+      <SIT>SIT</SIT>
+      <UAT>UAT</UAT>
+      <PREPROD>PREPROD</PREPROD>
+      <PROD></PROD>
+   </Service>
+   <Service name = "EnterpriseMemberSearch">
+      <SB>SANDBOX2</SB>
+      <DEV>DEV</DEV>
+      <SIT>SIT</SIT>
+      <UAT>UAT</UAT>
+      <PREPROD>PREPROD</PREPROD>
+      <PROD></PROD>
+   </Service>
+   <Service name = "enpi">
+      <SB>SANDBOX2</SB>
+      <DEV>DEV</DEV>
+      <SIT>SIT</SIT>
+      <UAT>UAT</UAT>
+      <PREPROD>PREPROD</PREPROD>
+      <PROD></PROD>
+   </Service>
+   <Service name = "enterpriseprovidersearch">
+      <SB>SANDBOX2</SB>
+      <DEV>DEV</DEV>
+      <SIT>SIT</SIT>
+      <UAT>UAT</UAT>
+      <PREPROD>PREPROD</PREPROD>
+      <PROD></PROD>
+   </Service>
+   <Service name = "ProviderBrokerService">
+      <SB>SANDBOX2</SB>
+      <DEV>DEV</DEV>
+      <SIT>SIT</SIT>
+      <UAT>UAT</UAT>
+      <PREPROD>PREPROD</PREPROD>
+      <PROD></PROD>
+   </Service>
+   <Service name = "MECHABroker">
+      <SB>SANDBOX2</SB>
+      <DEV>DEV</DEV>
+      <SIT>SIT</SIT>
+      <UAT>UAT</UAT>
+      <PREPROD>PREPROD</PREPROD>
+      <PROD></PROD>
+   </Service>
+
+</ServiceDomains>
