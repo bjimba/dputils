@@ -1,11 +1,15 @@
 @echo off
+setlocal
+
+call %~dp0\dp-init.bat
+if errorlevel 1 goto :EOF
+
+echo dpenviron %dpenviron%
+echo host %host%
+goto :EOF
 
 rem This could either call FirmwareStatus or FirmwareVersion
 rem FirmwareVersion seems more useful
-
-if defined dpdomain goto DomainOk
->&2 echo Please run dp-environ.bat first
-goto :EOF
 
 :DomainOk
 >&2 echo Host: %dphost%
