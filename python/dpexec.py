@@ -17,13 +17,6 @@ def main(ctx, verbose, env):
     ctx.obj = {}
     ctx.obj['verbose'] = verbose
 
-    #argparser = argparse.ArgumentParser()
-    #argparser.add_argument('--verbose', action='store_true')
-    #argparser.add_argument('env')
-    #argparser.add_argument('op')
-    #argparser.add_argument('params', nargs='*')
-    #args = argparser.parse_args()
-
     if verbose:
         eprint("VERBOSE!")
 
